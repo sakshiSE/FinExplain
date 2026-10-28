@@ -1,0 +1,18 @@
+
+:root {
+  --navy-primary: #1e293b;
+  --beige-bg: #fdfbf7;
+  --beige-card: #f5f0e6;
+  --beige-border: #e2d9cc;
+  --accent-gold: #c59b27;
+  --accent-blue: #2563eb;
+  --text-dark: #1c1917;
+  --text-muted: #666059;
+}
+body {
+  font-family: system-ui, sans-serif;
+  background-color: var(--beige-bg);
+  color: var(--text-dark);
+  margin: 0;
+  padding: 0;
+}

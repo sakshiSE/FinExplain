@@ -1,0 +1,18 @@
+# Python & Virtual Envs
+.venv/
+__pycache__/
+*.pyc
+*.zip
+
+# Node & SvelteKit
+frontend/node_modules/
+frontend/.svelte-kit/
+frontend/build/
+
+# Local OS & LaTeX build temp files
+.DS_Store
+*.aux
+*.log
+*.out
+*.toc
+*.synctex.gz

@@ -1,0 +1,30 @@
+========================================================================
+             FinExplain: Complete Setup & Execution Guide
+========================================================================
+
+QUICK RUN INSTRUCTIONS ON YOUR LAPTOP:
+
+1. BACKEND SETUP:
+   Open PowerShell in the root 'FinExplain' folder:
+     python -m venv venv
+     .\venv\Scripts\Activate.ps1
+     pip install -r backend/requirements.txt
+     cd backend
+     uvicorn app.main:app --reload --port 8000
+
+   * Backend API running at: http://127.0.0.1:8000
+   * Docs at: http://127.0.0.1:8000/docs
+
+2. FRONTEND SETUP (In a SECOND PowerShell window):
+   Navigate to 'FinExplain/frontend':
+     npm install
+     npm run dev
+
+   * Open website in browser at: http://localhost:5173
+
+3. USING THE APPLICATION:
+   - Upload any readable financial report PDF.
+   - Ask questions like:
+     * "What is revenue?"
+     * "How much did revenue increase compared to last year?"
+   - The application displays the answer, source page references, and automated calculations!
