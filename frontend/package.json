@@ -2,9 +2,6 @@
   "name": "finexplain-frontend",
   "version": "1.0.0",
   "private": true,
-  "engines": {
-    "node": "24.x"
-  },
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
@@ -12,7 +9,6 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.0.0",
-    "@sveltejs/adapter-vercel": "^7.0.1",
     "@sveltejs/kit": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^3.0.0",
     "svelte": "^4.2.0",
