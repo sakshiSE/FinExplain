@@ -12,7 +12,7 @@
     loading = true; error = '';
     const fd = new FormData(); fd.append('file', file);
     try {
-      const res = await fetch('http://127.0.0.1:8000/upload', { method: 'POST', body: fd });
+      const res = await fetch('https://finexplain-h2zk.onrender.com/upload', { method: 'POST', body: fd });
       const data = await res.json();
       if (!res.ok) throw new Error(data.detail || 'Upload failed');
       filename = data.filename; 
@@ -26,7 +26,7 @@
     const q = question; question = ''; loading = true; error = '';
     messages = [...messages, { role: 'user', text: q }];
     try {
-      const res = await fetch('http://127.0.0.1:8000/ask', {
+      const res = await fetch('https://finexplain-h2zk.onrender.com/ask', {
         method: 'POST', headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({ question: q })
       });
