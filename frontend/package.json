@@ -1,7 +1,11 @@
+
 {
   "name": "finexplain-frontend",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
