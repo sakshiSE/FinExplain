@@ -6,12 +6,14 @@ from pypdf import PdfReader
 from rank_bm25 import BM25Okapi
 
 app = FastAPI()
+
+# Enable CORS for all origins to prevent cross-origin block on Vercel
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=['*'],
-    allow_headers=['*'],
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 db = {'chunks': [], 'bm25': None, 'filename': None}
