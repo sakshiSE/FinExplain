@@ -38,7 +38,6 @@ async def upload(file: UploadFile = File(...)):
         raw_text = page.extract_text() or ''
         cleaned = clean_text(raw_text)
         
-        # Deprioritize glossary / index pages for general queries
         is_glossary = any(k in cleaned.lower() for k in ['glossary', 'explanation of terms', 'index of terms'])
         if cleaned:
             chunks.append({
@@ -65,13 +64,11 @@ def ask(req: QueryReq):
     q_tokens = re.findall(r'\w+', q_lower)
     scores = db['bm25'].get_scores(q_tokens) if db['bm25'] is not None else []
     
-    # Filter candidates: prioritize non-glossary pages unless user asks for definition
     asking_definition = any(k in q_lower for k in ['what is', 'define', 'meaning', 'explanation']) and not any(k in q_lower for k in ['revenue', 'profit', 'price', 'turnover', 'amount', 'total'])
     
     candidates = []
     if len(scores) > 0:
         scores_list = list(scores)
-        # Apply penalty to glossary pages for numerical questions
         for idx, score in enumerate(scores_list):
             adjusted_score = score
             if db['chunks'][idx]['is_glossary'] and not asking_definition:
@@ -84,19 +81,40 @@ def ask(req: QueryReq):
     else:
         matched = db['chunks'][:2]
     
-    # Math calculation detection
-    nums = [float(x) for x in re.findall(r'\d+(?:\.\d+)?', req.question)]
+    # Filter out 4-digit years so math logic doesn't treat years as amounts
+    clean_q = re.sub(r'fy\d{2,4}', '', q_lower)
+    clean_q = re.sub(r'\b(19|20)\d{2}\b', '', clean_q)
+    
+    nums = [float(x) for x in re.findall(r'\d+(?:\.\d+)?', clean_q)]
+    
     calc = None
-    if len(nums) >= 2 and any(k in q_lower for k in ['increase', 'change', 'percent', 'growth', 'from']):
-        c, p = nums[1], nums[0]
+    if len(nums) >= 2 and any(k in q_lower for k in ['increase', 'change', 'percent', 'growth', 'from', 'to']):
+        p, c = nums[0], nums[1]
         if p != 0:
             diff = c - p
             pct = (diff / abs(p)) * 100
-            calc = {'formula': f'(({c} - {p}) / {p}) * 100', 'result': f'{pct:+.2f}%', 'diff': f'{diff:+.2f}'}
+            calc = {
+                'formula': f'(({c} - {p}) / {p}) * 100', 
+                'result': f'{pct:+.2f}%', 
+                'diff': f'{diff:+.2f}'
+            }
 
     pages = [m['page'] for m in matched]
-    summary = ' '.join([m['text'] for m in matched])[:380]
-    answer = f"Based on the report (Page {pages[0]}): {summary}..."
+    
+    # --- CLEAN TEXT FORMATTING ---
+    # Strip away generic headers/addresses and pick relevant sentence
+    snippet = matched[0]['text']
+    
+    # Find key sentences containing numbers or target words
+    sentences = re.split(r'(?<=[.!?]) +', snippet)
+    financial_sentences = [s for s in sentences if any(k in s.lower() for k in ['revenue', 'profit', 'crore', 'fy2025', 'increased', 'growth', 'margin', 'total'])]
+    
+    if financial_sentences:
+        clean_summary = ' '.join(financial_sentences[:2])
+    else:
+        clean_summary = snippet[:250]
+        
+    answer = f"According to the report (Page {pages[0]}): {clean_summary}"
 
     return {
         'question': req.question, 

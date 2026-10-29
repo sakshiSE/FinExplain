@@ -9,6 +9,8 @@ frontend/node_modules/
 frontend/.svelte-kit/
 frontend/build/
 
+backend/requirements_og.txt
+
 # Local OS & LaTeX build temp files
 .DS_Store
 *.aux
